@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
     }
 
     //make this like accoridng to image size (scaled hopefully) later
-    int flags = SDL_WINDOW_RESIZABLE;
+    int flags = SDL_WINDOW_RESIZABLE; //why this not work in i3wm? --> it auto tiles the imgv window instead of making it flaoting from the start
     SDL_Window *window = SDL_CreateWindow("imgv", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,  640, 480, flags);
     if (window == NULL) {
         printf("Error creating window: %s\n", SDL_GetError());
