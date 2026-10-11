@@ -4,7 +4,8 @@ LIBS = $(shell pkg-config --cflags --libs sdl2 SDL2_image)
 
 TARGET = imgv
 SRC = main.c
-ARGS ?= think.png
+ARG1 ?= think.png
+ARG2 ?= -v
 
 .PHONY: all build run clean
 
@@ -14,7 +15,7 @@ $(TARGET): $(SRC)
 	$(CC) $(CFLAGS) $(SRC) -o $(TARGET) $(LIBS)
 
 run: $(TARGET)
-	./$(TARGET) $(ARGS)
+	./$(TARGET) $(ARG1) $(ARG2)
 
 clean:
 	rm -f $(TARGET)
