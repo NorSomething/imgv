@@ -1,5 +1,6 @@
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_events.h>
+#include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_stdinc.h>
@@ -73,8 +74,8 @@ int main(int argc, char** argv) {
 
     float zoom = 1.0f;
     SDL_Rect dst = {
-        1280/2 - img_w/2,
-        720/2 - img_h/2,
+        (1280 - img_w) / 2,
+        (720 - img_h) / 2,
         img_w,
         img_h
     };
@@ -85,35 +86,50 @@ int main(int argc, char** argv) {
     SDL_RenderPresent(renderer);
 
     SDL_Event event;
+    int running = 1;
 
-    while(1) {
+    int w,h;
+
+    while(running) {
         while(SDL_PollEvent(&event)) {
+
+            if (event.type == SDL_Quit) {
+                running = 0;
+            }
+
             if (event.type == SDL_KEYDOWN) {
 
+                float old_zoom = zoom;
+                float new_zoom = zoom;
+
                 switch (event.key.keysym.sym) {
-                    case 113:
+                    case SDLK_q:
                         printf("Q key pressed..\nExiting..\n");
-                        SDL_DestroyWindow(window);
-                        SDL_Quit();
-                        return 0;
+                        running = 0;
                         break;
-                    case 114:
-                        printf("+ key pressed..\nZooming in..\n"); //unreachable rn??
-                        zoom+= 0.5;
-                        int w = (int)(640*zoom);
-                        int h = (int)(480*zoom);
 
-                        dst.w = w;
-                        dst.h = h;
-                        dst.x = 1280/2 - w/2;
-                        dst.y = 720/2 - h/2;
+                    case SDLK_EQUALS:
+                    case SDLK_PLUS:
+                        printf("+ key pressed..\nZooming in..\n");
+                        new_zoom = zoom * 1.25f;
+                        break;
 
+                    case SDLK_MINUS:
+                        printf("- key pressed..\nZooming out..\n");
+                        new_zoom = zoom * 1.25f;
                         break;
 
                     default:
                         break;
 
                 }
+
+                //clamping img
+                if (new_zoom < 0.1f)
+                    new_zoom = 0.1;
+
+                if (new_zoom > 10.0f)
+                    new_zoom = 10.0f;
 
                 SDL_RenderClear(renderer);
                 SDL_RenderCopy(renderer, img_texture, NULL, &dst); //draw in whole window
