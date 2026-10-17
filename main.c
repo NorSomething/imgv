@@ -1,6 +1,7 @@
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL_mouse.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_stdinc.h>
@@ -116,7 +117,7 @@ int main(int argc, char** argv) {
 
                     case SDLK_MINUS:
                         printf("- key pressed..\nZooming out..\n");
-                        new_zoom = zoom * 1.25f;
+                        new_zoom = zoom / 1.25f;
                         break;
 
                     default:
@@ -130,6 +131,25 @@ int main(int argc, char** argv) {
 
                 if (new_zoom > 10.0f)
                     new_zoom = 10.0f;
+
+                if (new_zoom != old_zoom) {
+                    int m_x, m_y;
+                    SDL_GetMouseState(&m_x, &m_y);
+
+                    float img_x = (m_x - dst.x) / old_zoom;
+                    float img_y = (m_y - dst.y) / old_zoom;
+
+                    zoom = new_zoom;
+
+                    //resizing
+                    dst.w = (int)(img_w * zoom);
+                    dst.h = (int)(img_h * zoom);
+
+                    //put it under my poniter
+                    dst.x = (int)(m_x - img_x*zoom);
+                    dst.y = (int)(m_y - img_y*zoom);
+
+                }
 
                 SDL_RenderClear(renderer);
                 SDL_RenderCopy(renderer, img_texture, NULL, &dst); //draw in whole window
